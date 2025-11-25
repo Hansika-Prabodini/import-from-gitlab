@@ -12,11 +12,15 @@ class SqlQuery:
 
         Returns:
             bool: True if the album exists, False otherwise
+        
+        Security:
+            Uses parameterized queries to prevent SQL injection attacks.
+            User input is passed as a query parameter, never interpolated.
         """
         with sqlite3.connect("data/chinook.db") as conn:
             cur = conn.cursor()
-
-            cur.execute(f"SELECT * FROM Album WHERE Title = '{name}'")
+            # Use parameterized query with ? placeholder to prevent SQL injection
+            cur.execute("SELECT * FROM Album WHERE Title = ?", (name,))
             return len(cur.fetchall()) > 0
 
     @staticmethod
@@ -25,10 +29,13 @@ class SqlQuery:
 
         Returns:
             list:
+        
+        Security:
+            Static query with no user input parameters - no SQL injection risk.
         """
         with sqlite3.connect("data/chinook.db") as conn:
             cur = conn.cursor()
-
+            # Static query with no parameters - secure by design
             cur.execute(
                 dedent(
                     """\
@@ -57,10 +64,13 @@ class SqlQuery:
 
         Returns:
             list: List of tuples
+        
+        Security:
+            Static query with no user input parameters - no SQL injection risk.
         """
         with sqlite3.connect("data/chinook.db") as conn:
             cur = conn.cursor()
-
+            # Static query with no parameters - secure by design
             cur.execute(
                 dedent(
                     """\

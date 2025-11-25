@@ -59,6 +59,24 @@ def test_benchmark_count_duplicates(benchmark) -> None:
     benchmark(DoubleForLoop.count_duplicates, [1, 1, 2, 2], [1, 1, 2, 2])
 
 
+def test_count_duplicates_bug() -> None:
+    """Test that demonstrates the bug in count_duplicates.
+    
+    This test checks arrays with common elements at different positions.
+    With the bug (i == j constraint), it returns 0.
+    After the fix (removing i == j), it should count all matching pairs.
+    
+    [1, 2, 3] and [3, 2, 1] have:
+    - arr0[0]=1 matches arr1[2]=1 (1 match)
+    - arr0[1]=2 matches arr1[1]=2 (1 match)  
+    - arr0[2]=3 matches arr1[0]=3 (1 match)
+    Total: 3 duplicates
+    """
+    # With the bug: returns 0 (no elements match at same index)
+    # After fix: returns 3 (all elements have matches)
+    assert DoubleForLoop.count_duplicates([1, 2, 3], [3, 2, 1]) == 3
+
+
 @pytest.mark.parametrize(
     "matrix, S",
     [

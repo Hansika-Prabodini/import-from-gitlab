@@ -1,10 +1,11 @@
 from typing import List
+import math
 
 
 class Primes:
     @staticmethod
     def is_prime(n: int) -> bool:
-        """Check if a number is prime
+        """Check if a number is prime (optimized to O(√n))
 
         Args:
             n (int): Number to check
@@ -14,7 +15,12 @@ class Primes:
         """
         if n < 2:
             return False
-        for i in range(2, n):
+        if n == 2:
+            return True
+        if n % 2 == 0:
+            return False
+        # Only check odd divisors up to sqrt(n)
+        for i in range(3, int(math.sqrt(n)) + 1, 2):
             if n % i == 0:
                 return False
         return True
@@ -51,7 +57,7 @@ class Primes:
 
     @staticmethod
     def sum_primes(n: int) -> int:
-        """Sum of primes from 0 to n (exclusive)
+        """Sum of primes from 0 to n (exclusive) - optimized with Sieve of Eratosthenes
 
         Args:
             n (int): Number to sum up to
@@ -59,11 +65,21 @@ class Primes:
         Returns:
             int: Sum of primes from 0 to n
         """
-        sum_ = 0
-        for i in range(n):
-            if Primes.is_prime(i):
-                sum_ += i
-        return sum_
+        if n <= 2:
+            return 0
+        
+        # Sieve of Eratosthenes for O(n log log n) complexity
+        is_prime = [True] * n
+        is_prime[0] = is_prime[1] = False
+        
+        for i in range(2, int(math.sqrt(n)) + 1):
+            if is_prime[i]:
+                # Mark all multiples of i as not prime
+                for j in range(i * i, n, i):
+                    is_prime[j] = False
+        
+        # Sum all prime numbers
+        return sum(i for i in range(n) if is_prime[i])
 
     @staticmethod
     def prime_factors(n: int) -> List[int]:

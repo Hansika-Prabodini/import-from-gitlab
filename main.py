@@ -6,6 +6,7 @@ from llm_benchmark.generator.gen_list import GenList
 from llm_benchmark.sql.query import SqlQuery
 from llm_benchmark.datastructures.dslist import DsList
 from llm_benchmark.strings.strops import StrOps
+from llm_benchmark.auth.simple_auth import SimpleAuth
 
 
 def single():
@@ -120,6 +121,55 @@ def strops():
 
     is_palindrome = StrOps.palindrome(test_str)
     print("Is palindrome:", is_palindrome)
+    print()
+
+
+def auth():
+    print("SimpleAuth")
+    print("----------")
+
+    # Test password hashing and verification
+    password = "SecurePass123"
+    print(f"Original password: {password}")
+    
+    hashed, salt = SimpleAuth.hash_password(password)
+    print(f"Hashed password: {hashed[:32]}...")
+    print(f"Salt: {salt[:16]}...")
+    
+    is_valid = SimpleAuth.verify_password(password, hashed, salt)
+    print(f"Password verification (correct): {is_valid}")
+    
+    is_valid = SimpleAuth.verify_password("WrongPass", hashed, salt)
+    print(f"Password verification (incorrect): {is_valid}")
+    
+    # Test token generation
+    token = SimpleAuth.generate_token(16)
+    print(f"Generated token: {token}")
+    
+    # Test username validation
+    print(f"validate_username('john_doe'): {SimpleAuth.validate_username('john_doe')}")
+    print(f"validate_username('ab'): {SimpleAuth.validate_username('ab')}")
+    print(f"validate_username('user@name'): {SimpleAuth.validate_username('user@name')}")
+    
+    # Test password strength
+    print(f"check_password_strength('weak'): {SimpleAuth.check_password_strength('weak')}")
+    print(f"check_password_strength('SecurePass123'): {SimpleAuth.check_password_strength('SecurePass123')}")
+    
+    # Test user creation
+    user = SimpleAuth.create_user("john_doe", "SecurePass123")
+    print(f"Created user: {user['username']}")
+    
+    # Test authentication
+    authenticated = SimpleAuth.authenticate_user(
+        "john_doe", "SecurePass123", user['password_hash'], user['salt']
+    )
+    print(f"Authentication (correct): {authenticated}")
+    
+    authenticated = SimpleAuth.authenticate_user(
+        "john_doe", "WrongPass", user['password_hash'], user['salt']
+    )
+    print(f"Authentication (incorrect): {authenticated}")
+    print()
 
 
 def main():
@@ -130,6 +180,7 @@ def main():
     sort()
     dslist()
     strops()
+    auth()
 
 
 if __name__ == "__main__":

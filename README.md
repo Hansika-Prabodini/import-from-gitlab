@@ -28,6 +28,9 @@ This benchmarking suite tests various aspects of code generation and execution i
 ### 🔤 String Operations (`llm_benchmark.strings`)
 - **StrOps**: String reversal and palindrome detection
 
+### 🔐 Authentication (`llm_benchmark.auth`)
+- **SimpleAuth**: Password hashing and verification, token generation, username validation, password strength checking, and user authentication
+
 ### 🗄️ SQL Queries (`llm_benchmark.sql`)
 - **SqlQuery**: Database operations including album queries, table joins, and invoice analysis using SQLite (Chinook database)
 
@@ -72,6 +75,7 @@ from llm_benchmark.algorithms.primes import Primes
 from llm_benchmark.control.single import SingleForLoop
 from llm_benchmark.datastructures.dslist import DsList
 from llm_benchmark.strings.strops import StrOps
+from llm_benchmark.auth.simple_auth import SimpleAuth
 
 # Check if a number is prime
 is_prime = Primes.is_prime(17)  # Returns: True
@@ -84,6 +88,10 @@ reversed_list = DsList.reverse_list([1, 2, 3, 4, 5])  # Returns: [5, 4, 3, 2, 1]
 
 # Check palindrome
 is_palindrome = StrOps.palindrome("racecar")  # Returns: True
+
+# Hash a password
+hashed, salt = SimpleAuth.hash_password("SecurePass123")
+is_valid = SimpleAuth.verify_password("SecurePass123", hashed, salt)  # Returns: True
 ```
 
 ## Testing
@@ -139,6 +147,15 @@ This will measure and compare the execution time of different implementations an
 - `StrOps.str_reverse(s)` - Reverse a string
 - `StrOps.palindrome(s)` - Check if string is palindrome
 
+### Authentication
+- `SimpleAuth.hash_password(password, salt)` - Hash a password with salt
+- `SimpleAuth.verify_password(password, hashed, salt)` - Verify password against hash
+- `SimpleAuth.generate_token(length)` - Generate secure random token
+- `SimpleAuth.validate_username(username, min_length, max_length)` - Validate username format
+- `SimpleAuth.check_password_strength(password)` - Check password strength
+- `SimpleAuth.create_user(username, password)` - Create user with validated credentials
+- `SimpleAuth.authenticate_user(username, password, stored_hash, stored_salt)` - Authenticate user
+
 ### SQL Queries
 - `SqlQuery.query_album(name)` - Check if album exists
 - `SqlQuery.join_albums()` - Join Album, Artist, and Track tables
@@ -151,6 +168,7 @@ llm-benchmarking-py/
 ├── src/
 │   └── llm_benchmark/
 │       ├── algorithms/      # Algorithm implementations
+│       ├── auth/           # Authentication utilities
 │       ├── control/         # Control flow operations
 │       ├── datastructures/  # Data structure operations
 │       ├── generator/       # Test data generators

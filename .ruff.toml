@@ -1,0 +1,86 @@
+# Ruff configuration for llm_benchmark project
+# https://docs.astral.sh/ruff/configuration/
+
+# Target Python 3.8+
+target-version = "py38"
+
+# Set line length to 88 (black default)
+line-length = 88
+
+# Exclude common directories
+exclude = [
+    ".git",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "build",
+    "dist",
+    "data",
+]
+
+[lint]
+# Enable specific rule sets
+select = [
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "F",     # pyflakes
+    "I",     # isort
+    "N",     # pep8-naming
+    "UP",    # pyupgrade
+    "B",     # flake8-bugbear
+    "C4",    # flake8-comprehensions
+    "SIM",   # flake8-simplify
+    "PIE",   # flake8-pie
+    "PT",    # flake8-pytest-style
+    "RET",   # flake8-return
+]
+
+# Ignore specific rules
+ignore = [
+    "E501",   # Line too long (handled by formatter)
+    "SIM108", # Use ternary operator (can reduce readability in benchmarks)
+    "B905",   # zip without strict parameter (Python 3.8 compatibility)
+    "C416",   # Unnecessary list comprehension (benchmarking loop patterns)
+    "RET504", # Unnecessary variable assignment before return (benchmark clarity)
+    "SIM102", # Use a single if statement (intentional nested structure for benchmarking)
+    "SIM110", # Use all() instead of for loop (benchmarking loop patterns)
+    "SIM111", # Use any() instead of for loop (benchmarking loop patterns)
+]
+
+# Allow fix for all enabled rules (when `--fix` is provided)
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[lint.per-file-ignores]
+# Ignore specific rules in test files
+"tests/**/*.py" = [
+    "S101",  # Use of assert
+]
+
+# Ignore intentional inefficiencies in benchmark functions
+"src/llm_benchmark/algorithms/primes.py" = [
+    "B007",   # Unused loop variable (intentional in is_prime_ineff)
+    "PIE790", # Unnecessary pass statement (intentional in is_prime_ineff)
+]
+
+# Allow benchmark-style iteration patterns throughout the codebase
+"src/llm_benchmark/**/*.py" = [
+    "C414",   # Unnecessary list comprehension (benchmarking patterns)
+    "PERF401", # Use list comprehension (intentional for-loop benchmarking)
+]
+
+[lint.isort]
+# isort configuration
+known-first-party = ["llm_benchmark"]
+force-single-line = false
+lines-after-imports = 2
+
+[lint.pydocstyle]
+# Use Google-style docstrings
+convention = "google"

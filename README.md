@@ -170,6 +170,37 @@ poetry run black src/ tests/
 poetry run isort src/ tests/
 ```
 
+### Code Linting
+
+This project uses [ruff](https://docs.astral.sh/ruff/) for fast and comprehensive Python linting. Ruff checks for code quality, potential bugs, and style issues.
+
+#### Run the linter:
+```bash
+# Check all files
+poetry run ruff check .
+
+# Check specific directory
+poetry run ruff check src/
+
+# Auto-fix issues where possible
+poetry run ruff check --fix .
+```
+
+#### Linter Configuration
+
+The linter is configured in `.ruff.toml` with the following features:
+- **Python 3.8+** compatibility
+- **Line length**: 88 characters (black default)
+- **Enabled rules**: pycodestyle, pyflakes, isort, flake8-bugbear, and more
+- **Benchmark exceptions**: Intentional inefficiencies (like `is_prime_ineff()`) are explicitly marked and excluded from certain checks
+
+#### CI/CD Integration
+
+When running in CI/CD pipelines, add the linter check:
+```bash
+poetry run ruff check . --output-format=github
+```
+
 ## License
 
 See project repository for license information.

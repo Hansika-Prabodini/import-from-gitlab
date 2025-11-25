@@ -164,10 +164,69 @@ llm-benchmarking-py/
 
 ## Development
 
-### Code Formatting
+### Development Setup
+
+This project uses pre-commit hooks to ensure code quality and consistency. Follow these steps to set up your development environment:
+
+1. **Install dependencies** (including dev dependencies):
 ```bash
+poetry install
+```
+
+2. **Install pre-commit hooks**:
+```bash
+poetry run pre-commit install
+```
+
+This will configure git hooks that automatically run code quality checks before each commit.
+
+### Pre-commit Hooks
+
+The following checks run automatically on commit:
+
+- **black**: Automatic code formatting
+- **isort**: Import statement sorting
+- **ruff**: Fast Python linting (checks for common errors and style issues)
+- **mypy**: Static type checking
+- **trailing-whitespace**: Removes trailing whitespace
+- **end-of-file-fixer**: Ensures files end with a newline
+- **check-yaml**: Validates YAML syntax
+
+### Running Pre-commit Manually
+
+To run all hooks on all files (useful for initial setup or bulk changes):
+```bash
+poetry run pre-commit run --all-files
+```
+
+To run pre-commit on staged files only:
+```bash
+poetry run pre-commit run
+```
+
+### Bypassing Pre-commit Hooks
+
+In rare cases where you need to commit without running hooks (not recommended):
+```bash
+git commit --no-verify -m "Your commit message"
+```
+
+### Manual Code Formatting
+
+You can also run formatters manually:
+
+```bash
+# Format code with black
 poetry run black src/ tests/
+
+# Sort imports with isort
 poetry run isort src/ tests/
+
+# Run linter
+poetry run ruff check src/ tests/
+
+# Run type checker
+poetry run mypy src/
 ```
 
 ## License

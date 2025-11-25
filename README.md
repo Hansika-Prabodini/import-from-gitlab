@@ -106,6 +106,16 @@ poetry run pytest --benchmark-only tests/
 
 This will measure and compare the execution time of different implementations and provide detailed performance metrics.
 
+### Micro-benchmarks
+
+Run standalone performance comparison for prime number functions:
+
+```bash
+poetry run python benchmark_primes.py
+```
+
+This micro-benchmark script compares the performance of optimized vs original implementations of `is_prime()` and `sum_primes()` functions, demonstrating the speedup achieved through algorithmic optimizations (O(n) -> O(√n) for `is_prime`, O(n²) -> O(n log log n) for `sum_primes`).
+
 ## Module Documentation
 
 ### Algorithms

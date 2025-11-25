@@ -18,6 +18,27 @@ def test_benchmark_query_album(benchmark) -> None:
     benchmark(SqlQuery.query_album, "Presence")
 
 
+def test_query_album_sql_injection_safety() -> None:
+    """Test that the query_album function is safe from SQL injection.
+    
+    This test ensures that single quotes in album names are properly escaped
+    and don't break the SQL query or allow injection attacks.
+    """
+    # Test with a single quote in the name (common in album titles)
+    # This should return False (album doesn't exist) without causing an error
+    result = SqlQuery.query_album("Test' OR '1'='1")
+    assert result is False
+    
+    # Test with another injection attempt
+    result = SqlQuery.query_album("'; DROP TABLE Album; --")
+    assert result is False
+    
+    # Test normal string with apostrophe (like "Greatest Hits '92")
+    # Should work without crashing
+    result = SqlQuery.query_album("Greatest Hits '92")
+    assert result is False  # Assuming this album doesn't exist in test DB
+
+
 def test_join_albums() -> None:
     assert SqlQuery.join_albums()[0] == (
         "For Those About To Rock (We Salute You)",

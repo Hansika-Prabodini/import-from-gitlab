@@ -37,6 +37,36 @@ This benchmarking suite tests various aspects of code generation and execution i
 ### 🎲 Generators (`llm_benchmark.generator`)
 - **GenList**: Random list and matrix generation for testing purposes
 
+## ⚡ Performance & Optimization
+
+Recent optimization work has significantly improved the performance of prime number algorithms in this library:
+
+### Key Optimizations
+
+- **`is_prime()` function**: Optimized from **O(n) → O(√n)** complexity
+  - Only checks divisors up to √n
+  - Skips even numbers after checking for 2
+  - Results in **~√n times faster** performance for large inputs
+
+- **`sum_primes()` function**: Optimized from **O(n²) → O(n log log n)** complexity
+  - Implemented using the Sieve of Eratosthenes algorithm
+  - Achieves **10-100x faster** performance depending on input size
+  - Trade-off: Uses O(n) memory instead of O(1)
+
+### Benchmarking
+
+You can verify these performance improvements using the included benchmark script:
+
+```bash
+python benchmark_primes.py
+# or
+poetry run python benchmark_primes.py
+```
+
+For detailed information about the optimization process and performance analysis, see:
+- [CHANGES.md](CHANGES.md) - Summary of changes and quick metrics
+- [OPTIMIZATION.md](OPTIMIZATION.md) - Comprehensive optimization report with before/after comparisons
+
 ## Installation
 
 ### Prerequisites

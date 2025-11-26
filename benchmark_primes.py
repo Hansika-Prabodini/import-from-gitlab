@@ -13,8 +13,7 @@ Usage:
 """
 
 import time
-import math
-from typing import Callable, List, Tuple
+from typing import Callable, Tuple, Any
 from llm_benchmark.algorithms.primes import Primes
 
 
@@ -42,7 +41,7 @@ class PrimesOriginal:
         return sum_
 
 
-def time_function(func: Callable, *args, iterations: int = 100) -> Tuple[float, any]:
+def time_function(func: Callable[..., Any], *args, iterations: int = 100) -> Tuple[float, Any]:
     """
     Time a function over multiple iterations.
     

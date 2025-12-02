@@ -91,22 +91,23 @@ def dslist():
     test_list = [1, 2, 3, 4, 5]
     print("Original list:", test_list)
 
-    modified_list = DsList.modify_list(test_list)
+    # Use copies to avoid mutating the original list across operations
+    modified_list = DsList.modify_list(test_list[:])
     print("Modified list:", modified_list)
 
-    search_result = DsList.search_list(test_list, 3)
+    search_result = DsList.search_list(test_list[:], 3)
     print("Search result for 3:", search_result)
 
-    sorted_list = DsList.sort_list(test_list)
+    sorted_list = DsList.sort_list(test_list[:])
     print("Sorted list:", sorted_list)
 
-    reversed_list = DsList.reverse_list(test_list)
+    reversed_list = DsList.reverse_list(test_list[:])
     print("Reversed list:", reversed_list)
 
-    rotated_list = DsList.rotate_list(test_list, 2)
+    rotated_list = DsList.rotate_list(test_list[:], 2)
     print("Rotated list by 2 positions:", rotated_list)
 
-    merged_list = DsList.merge_lists(test_list, [6, 7, 8])
+    merged_list = DsList.merge_lists(test_list[:], [6, 7, 8])
     print("Merged list with [6, 7, 8]:", merged_list)
 
 def strops():

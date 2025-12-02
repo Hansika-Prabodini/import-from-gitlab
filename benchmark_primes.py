@@ -14,7 +14,7 @@ Usage:
 
 import time
 import math
-from typing import Callable, List, Tuple
+from typing import Callable, Tuple
 from llm_benchmark.algorithms.primes import Primes
 
 

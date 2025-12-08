@@ -124,3 +124,38 @@ def test_query_album_sql_injection_stacked_queries() -> None:
     # Verify the Album table still exists by querying a known album
     result_after = SqlQuery.query_album("Presence")
     assert result_after is True, "Album table should still exist and contain data"
+
+
+def test_query_album_sql_injection_prevention() -> None:
+    """Comprehensive test to verify SQL injection is prevented.
+    
+    This test would FAIL with vulnerable code using f-strings:
+        cur.execute(f"SELECT * FROM Album WHERE Title = '{name}'")
+    
+    With the malicious input "' OR '1'='1", the query becomes:
+        SELECT * FROM Album WHERE Title = '' OR '1'='1'
+    
+    This returns all albums (since '1'='1' is always true), making the
+    function return True instead of False.
+    
+    This test PASSES with parameterized queries:
+        cur.execute("SELECT * FROM Album WHERE Title = ?", (name,))
+    
+    The parameterized query treats the entire input as a literal string,
+    so it searches for an album literally named "' OR '1'='1", which
+    doesn't exist, correctly returning False.
+    """
+    # Test case that exploits SQL injection vulnerability
+    malicious_input = "' OR '1'='1"
+    
+    # With parameterized queries, this should return False
+    # (no album has this literal title)
+    # With f-string interpolation, this would return True
+    # (because the injected SQL always evaluates to true)
+    result = SqlQuery.query_album(malicious_input)
+    
+    assert result is False, (
+        "SQL injection prevention failed! The function should return False "
+        "for malicious input, but it returned True. This indicates the query "
+        "is vulnerable to SQL injection attacks."
+    )

@@ -68,3 +68,40 @@ def test_reverse_list(v: List[int], ref: List[int]) -> None:
 
 def test_benchmark_reverse_list(benchmark) -> None:
     benchmark(DsList.reverse_list, [1, 2, 3, 4, 5])
+
+
+@pytest.mark.parametrize(
+    "v, n, ref",
+    [
+        ([1, 2, 3, 4, 5], 0, [1, 2, 3, 4, 5]),  # No rotation
+        ([1, 2, 3, 4, 5], 2, [3, 4, 5, 1, 2]),  # Normal rotation
+        ([1, 2, 3, 4, 5], 5, [1, 2, 3, 4, 5]),  # Rotate by length (full cycle)
+        ([1, 2, 3], 5, [3, 1, 2]),  # n > len(v), should be equivalent to n % len(v) = 2
+        ([1, 2, 3], 7, [2, 3, 1]),  # n > len(v), should be equivalent to n % len(v) = 1
+        ([], 1, []),  # Empty list
+        ([1], 5, [1]),  # Single element
+    ],
+)
+def test_rotate_list(v: List[int], n: int, ref: List[int]) -> None:
+    assert DsList.rotate_list(v, n) == ref
+
+
+def test_benchmark_rotate_list(benchmark) -> None:
+    benchmark(DsList.rotate_list, [1, 2, 3, 4, 5], 2)
+
+
+@pytest.mark.parametrize(
+    "v1, v2, ref",
+    [
+        ([1, 2, 3], [4, 5], [1, 2, 3, 4, 5]),
+        ([], [1, 2], [1, 2]),
+        ([1, 2], [], [1, 2]),
+        ([], [], []),
+    ],
+)
+def test_merge_lists(v1: List[int], v2: List[int], ref: List[int]) -> None:
+    assert DsList.merge_lists(v1, v2) == ref
+
+
+def test_benchmark_merge_lists(benchmark) -> None:
+    benchmark(DsList.merge_lists, [1, 2, 3], [4, 5, 6])

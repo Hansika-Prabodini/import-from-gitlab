@@ -29,10 +29,7 @@ def double():
         f"count_pairs(random_list(30, 10)): {DoubleForLoop.count_pairs(GenList.random_list(30, 10))}"
     )
     print(
-        "count_duplicates(10, 10)",
-        DoubleForLoop.count_duplicates(
-            GenList.random_list(10, 2), GenList.random_list(10, 2)
-        ),
+        f"count_duplicates(random_list(10, 2), random_list(10, 2)): {DoubleForLoop.count_duplicates(GenList.random_list(10, 2), GenList.random_list(10, 2))}"
     )
     print(
         f"sum_matrix(random_matrix(10, 10)): {DoubleForLoop.sum_matrix(GenList.random_matrix(10, 10))}"
@@ -44,23 +41,31 @@ def sql():
     print("SQL")
     print("---")
 
-    print(f"query_album('Presence'): {SqlQuery.query_album('Presence')}")
-    print(f"query_album('Roundabout'): {SqlQuery.query_album('Roundabout')}")
-    print()
+    try:
+        print(f"query_album('Presence'): {SqlQuery.query_album('Presence')}")
+        print(f"query_album('Roundabout'): {SqlQuery.query_album('Roundabout')}")
+        print()
 
-    print("join_albums()")
-    print(SqlQuery.join_albums()[0])
-    print()
+        print("join_albums()")
+        joined = SqlQuery.join_albums()
+        if joined:
+            print(joined[0])
+        else:
+            print("No albums to join.")
+        print()
 
-    print("top_invoices()")
-    print(SqlQuery.top_invoices())
-    print()
+        print("top_invoices()")
+        print(SqlQuery.top_invoices())
+        print()
+    except Exception as e:
+        print(f"SQL demo skipped due to error: {e}")
+        print()
 
 def primes():
     print("Primes")
     print("------")
 
-    print(f"is_prime(1700): {Primes.is_prime_ineff(1700)}")
+    print(f"is_prime_ineff(1700): {Primes.is_prime_ineff(1700)}")
     print(f"sum_primes(210): {Primes.sum_primes(210)}")
     print(f"prime_factors(840): {Primes.prime_factors(840)}")
     print()
@@ -110,8 +115,8 @@ def dslist():
     print("Merged list with [6, 7, 8]:", merged_list)
 
 def strops():
-    print("Strops")
-    print("----")
+    print("StrOps")
+    print("------")
 
     test_str = "racecar"
     print("Original string:", test_str)

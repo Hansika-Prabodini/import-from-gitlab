@@ -74,11 +74,17 @@ class DsList:
 
         Args:
             v (List[int]): List of integers
-            n (int): Number of positions to rotate
+            n (int): Number of positions to rotate (positive = left, negative = right)
 
         Returns:
             List[int]: Rotated list of integers
         """
+        if len(v) == 0:
+            return []
+        
+        # Normalize rotation amount to handle n > len(v) and negative n
+        n = n % len(v)
+        
         ret = []
         for i in range(n, len(v)):
             ret.append(v[i])

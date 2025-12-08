@@ -59,6 +59,34 @@ def test_benchmark_count_duplicates(benchmark) -> None:
     benchmark(DoubleForLoop.count_duplicates, [1, 1, 2, 2], [1, 1, 2, 2])
 
 
+def test_count_duplicates_bug_fix() -> None:
+    """Test that count_duplicates correctly counts all duplicate occurrences
+    between two arrays, not just at matching indices.
+    
+    This test would fail with the buggy version that had 'i == j' condition,
+    but passes after removing that condition.
+    """
+    # Test case 1: Elements appear in different positions
+    # arr0 = [1, 2], arr1 = [2, 1]
+    # Should find: arr0[0]==arr1[1] (1==1) and arr0[1]==arr1[0] (2==2)
+    # Expected: 2 matches
+    # Buggy version would return: 0 (since indices don't match)
+    assert DoubleForLoop.count_duplicates([1, 2], [2, 1]) == 2
+    
+    # Test case 2: Multiple occurrences
+    # arr0 = [1, 1], arr1 = [1, 1, 1]
+    # Should find all 2*3=6 pairs where elements match
+    # Buggy version would return: 2 (only indices 0 and 1)
+    assert DoubleForLoop.count_duplicates([1, 1], [1, 1, 1]) == 6
+    
+    # Test case 3: Overlapping values at different positions
+    # arr0 = [5, 3, 7], arr1 = [7, 5]
+    # Should find: arr0[0]==arr1[1] (5==5) and arr0[2]==arr1[0] (7==7)
+    # Expected: 2 matches
+    # Buggy version would return: 0
+    assert DoubleForLoop.count_duplicates([5, 3, 7], [7, 5]) == 2
+
+
 @pytest.mark.parametrize(
     "matrix, S",
     [

@@ -22,7 +22,7 @@ The performance bottleneck stemmed from two inefficiencies:
    - Didn't utilize the mathematical property that divisors come in pairs
 
 2. **`sum_primes(n)`** function: O(n²) complexity
-   - Called `is_prime(i)` for every number from 0 to n
+   - Called `is_prime(i)` for every number from 0 up to n (exclusive)
    - Each `is_prime` call was O(n), resulting in O(n²) overall
    - Repeated primality checks for each number
 
@@ -34,9 +34,12 @@ The performance bottleneck stemmed from two inefficiencies:
 - Only check divisors up to √n (if a number has a divisor > √n, it must also have a divisor < √n)
 - Skip even numbers after checking for 2
 - Early return for n=2
+- Use the integer square root (math.isqrt) to avoid floating-point rounding and minor overhead
 
 **Code changes:**
 ```python
+from math import isqrt
+
 # Before: O(n)
 def is_prime(n: int) -> bool:
     if n < 2:
@@ -54,8 +57,9 @@ def is_prime(n: int) -> bool:
         return True
     if n % 2 == 0:
         return False
-    # Only check odd divisors up to sqrt(n)
-    for i in range(3, int(math.sqrt(n)) + 1, 2):
+    # Only check odd divisors up to sqrt(n) using integer sqrt
+    limit = isqrt(n)
+    for i in range(3, limit + 1, 2):
         if n % i == 0:
             return False
     return True
@@ -69,9 +73,12 @@ def is_prime(n: int) -> bool:
 - Implemented Sieve of Eratosthenes algorithm
 - Find all primes in a single pass
 - Eliminate repeated primality checks
+- Clarifies behavior: computes the sum of all primes strictly less than n
 
 **Code changes:**
 ```python
+from math import isqrt
+
 # Before: O(n²)
 def sum_primes(n: int) -> int:
     sum_ = 0
@@ -84,17 +91,17 @@ def sum_primes(n: int) -> int:
 def sum_primes(n: int) -> int:
     if n <= 2:
         return 0
-    
-    # Sieve of Eratosthenes
+
+    # Sieve of Eratosthenes (primes < n)
     is_prime = [True] * n
     is_prime[0] = is_prime[1] = False
-    
-    for i in range(2, int(math.sqrt(n)) + 1):
+
+    for i in range(2, isqrt(n - 1) + 1):
         if is_prime[i]:
             for j in range(i * i, n, i):
                 is_prime[j] = False
-    
-    return sum(i for i in range(n) if is_prime[i])
+
+    return sum(i for i, flag in enumerate(is_prime) if flag)
 ```
 
 **Trade-off:** Uses O(n) memory but achieves dramatic speed improvement

@@ -16,17 +16,24 @@
   - **Impact**: 10-100x faster depending on input size
   - **Trade-off**: Uses O(n) memory instead of O(1)
 
-#### 2. `benchmark_primes.py` (NEW)
+- **Function**: `prime_factors(n: int) -> List[int]`
+  - **Change**: Optimized from O(n²) to O(√n)
+  - **Details**: Only checks divisors up to √n, handles 2 separately, skips even numbers
+  - **Impact**: 10-1000x faster depending on input size
+  - **Trade-off**: None, uses O(1) memory like before
+
+#### 2. `benchmark_primes.py` (ENHANCED)
 - **Purpose**: Micro-benchmark script to demonstrate optimization improvements
 - **Features**:
   - Compares original vs optimized implementations
-  - Tests multiple input sizes
+  - Tests multiple input sizes for is_prime, sum_primes, and prime_factors
   - Shows timing, speedup metrics, and complexity analysis
-  - Verifies correctness of optimizations
+  - Verifies correctness of all optimizations
 
-#### 3. `OPTIMIZATION.md` (NEW)
+#### 3. `OPTIMIZATION.md` (UPDATED)
 - Comprehensive documentation of the optimization process
-- Includes bottleneck identification, root cause analysis, and performance comparison
+- Includes bottleneck identification for sum_primes and prime_factors
+- Root cause analysis and performance comparison for all optimizations
 - Provides usage instructions and future optimization opportunities
 
 #### 4. `CHANGES.md` (NEW)
@@ -69,14 +76,15 @@ poetry run python benchmark_primes.py
 
 ### Key Metrics
 
-| Function    | Before    | After             | Improvement   |
-|-------------|-----------|-------------------|---------------|
-| `is_prime`  | O(n)      | O(√n)             | ~√n faster    |
-| `sum_primes`| O(n²)     | O(n log log n)    | 10-100x faster|
+| Function        | Before    | After             | Improvement     |
+|-----------------|-----------|-------------------|-----------------|
+| `is_prime`      | O(n)      | O(√n)             | ~√n faster      |
+| `sum_primes`    | O(n²)     | O(n log log n)    | 10-100x faster  |
+| `prime_factors` | O(n²)     | O(√n)             | 10-1000x faster |
 
 ### Next Steps
 
 For further improvements, consider:
-1. Optimizing `prime_factors` function (currently O(n²))
-2. Optimizing sorting functions (bubble sort → quicksort)
-3. Adding caching/memoization for frequently called functions
+1. Optimizing sorting functions (bubble sort → quicksort)
+2. Adding caching/memoization for frequently called functions
+3. Optimizing DoubleForLoop functions with algorithmic improvements

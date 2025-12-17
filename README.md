@@ -1,16 +1,24 @@
 # llm-benchmarking-py
 
-A comprehensive collection of Python functions designed to benchmark LLM (Large Language Model) projects and code generation capabilities. This library provides a diverse set of computational tasks across multiple domains to evaluate performance, correctness, and efficiency.
+A comprehensive collection of Python functions designed to benchmark LLM (Large Language Model) projects and code generation capabilities. This library provides a diverse set of computational tasks across multiple domains to evaluate performance, correctness, and efficiency of generated code.
+
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Poetry](https://img.shields.io/badge/poetry-managed-blue)](https://python-poetry.org/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 ## Overview
 
-This benchmarking suite tests various aspects of code generation and execution including:
-- Algorithm implementation (prime numbers, sorting)
-- Control flow structures (loops, conditionals)
-- Data structure operations (lists, arrays)
-- String manipulation
-- SQL query execution
-- Data generation utilities
+This benchmarking suite tests various aspects of code generation and execution across multiple computational domains:
+
+- **Algorithms** - Prime numbers, sorting, search algorithms
+- **Control Flow** - Single/nested loops, conditionals
+- **Data Structures** - List operations (modify, search, sort, reverse, rotate, merge)
+- **String Operations** - Reversal, palindrome detection
+- **Authentication** - Password hashing, token generation, validation
+- **SQL Queries** - Database operations with SQLite (Chinook database)
+- **Data Generation** - Random data utilities for testing
+
+Perfect for evaluating LLM-generated code quality, performance characteristics, and algorithmic correctness.
 
 ## Features
 
@@ -37,23 +45,144 @@ This benchmarking suite tests various aspects of code generation and execution i
 ### 🎲 Generators (`llm_benchmark.generator`)
 - **GenList**: Random list and matrix generation for testing purposes
 
+## Table of Contents
+
+- [Architecture](#architecture)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Module Documentation](#module-documentation)
+- [Testing](#testing)
+- [Project Structure](#project-structure)
+- [Development](#development)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Architecture
+
+The following diagram illustrates the high-level architecture of llm-benchmarking-py:
+
+```mermaid
+graph TB
+    subgraph "Main Application"
+        Main[main.py<br/>Demo Runner]
+        Benchmark[benchmark_primes.py<br/>Micro-benchmark]
+    end
+
+    subgraph "llm_benchmark Package"
+        Algorithms[algorithms/<br/>Primes, Sort]
+        Auth[auth/<br/>SimpleAuth]
+        Control[control/<br/>Single, Double Loops]
+        DataStructures[datastructures/<br/>List Operations]
+        Generator[generator/<br/>Random Data]
+        SQL[sql/<br/>Query Operations]
+        Strings[strings/<br/>String Ops]
+    end
+
+    subgraph "External Resources"
+        DB[(data/chinook.db<br/>SQLite Database)]
+    end
+
+    subgraph "Testing Infrastructure"
+        Tests[tests/<br/>Unit & Benchmark Tests]
+        Pytest[pytest + pytest-benchmark]
+    end
+
+    Main --> Algorithms
+    Main --> Auth
+    Main --> Control
+    Main --> DataStructures
+    Main --> Strings
+    Main --> SQL
+    Main --> Generator
+    
+    Benchmark --> Algorithms
+    
+    SQL --> DB
+    Control --> Generator
+    Main --> Generator
+    
+    Tests --> Algorithms
+    Tests --> Auth
+    Tests --> Control
+    Tests --> DataStructures
+    Tests --> SQL
+    Tests --> Strings
+    Tests -.-> Pytest
+
+    style Main fill:#e1f5ff
+    style Benchmark fill:#e1f5ff
+    style DB fill:#ffe1e1
+    style Tests fill:#e8f5e8
+    style Pytest fill:#e8f5e8
+```
+
+### Component Overview
+
+- **Main Application**: Entry points for running demos and benchmarks
+- **Core Modules**: Self-contained benchmarking functions organized by domain
+- **Test Suite**: Comprehensive unit and performance tests using pytest
+- **External Resources**: SQLite database for realistic SQL query testing
+
 ## Installation
 
 ### Prerequisites
-- Python 3.8 or higher
-- Poetry (Python package manager)
 
-### Setup
+- **Python 3.8+** - [Download Python](https://www.python.org/downloads/)
+- **Poetry** - Python dependency management tool
 
-1. Clone the repository:
+### Installing Poetry
+
+If you don't have Poetry installed:
+
 ```bash
-git clone <repository-url>
-cd llm-benchmarking-py
+# macOS/Linux/WSL
+curl -sSL https://install.python-poetry.org | python3 -
+
+# Windows PowerShell
+(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
+
+# Alternative: using pip
+pip install poetry
 ```
 
-2. Install dependencies:
+### Quick Start
+
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd llm-benchmarking-py
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   poetry install
+   ```
+   
+   This creates a virtual environment and installs all required packages.
+
+3. **Verify installation:**
+   ```bash
+   poetry run pytest --benchmark-skip tests/
+   ```
+
+### Manual Setup (without Poetry)
+
+If you prefer not to use Poetry:
+
 ```bash
-poetry install
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+# On macOS/Linux:
+source venv/bin/activate
+# On Windows:
+venv\Scripts\activate
+
+# Install dependencies
+pip install pytest pytest-benchmark black isort
+
+# Note: This project has no runtime dependencies beyond Python stdlib
 ```
 
 ## Usage
@@ -63,12 +192,29 @@ poetry install
 Execute all benchmark functions with example data:
 
 ```bash
+# Using Poetry (recommended)
 poetry run main
+
+# Or activate the shell first
+poetry shell
+python main.py
 ```
 
-This will run demonstrations of all available modules and display their outputs.
+**Output**: Runs demonstrations of all modules (algorithms, control, SQL, auth, etc.) and displays results.
 
-### Using Individual Modules
+### Running Micro-benchmarks
+
+Compare optimized vs original implementations:
+
+```bash
+poetry run python benchmark_primes.py
+```
+
+**Output**: Detailed performance comparison showing speedup metrics and complexity analysis.
+
+### Using as a Library
+
+Import and use individual modules in your code:
 
 ```python
 from llm_benchmark.algorithms.primes import Primes
@@ -76,43 +222,130 @@ from llm_benchmark.control.single import SingleForLoop
 from llm_benchmark.datastructures.dslist import DsList
 from llm_benchmark.strings.strops import StrOps
 from llm_benchmark.auth.simple_auth import SimpleAuth
+from llm_benchmark.sql.query import SqlQuery
 
-# Check if a number is prime
-is_prime = Primes.is_prime(17)  # Returns: True
+# Algorithm benchmarks
+is_prime = Primes.is_prime(17)           # Returns: True
+prime_sum = Primes.sum_primes(100)       # Returns: 1060
+factors = Primes.prime_factors(84)       # Returns: [2, 2, 3, 7]
 
-# Sum a range of numbers
-total = SingleForLoop.sum_range(10)  # Returns: 45
+# Control flow benchmarks
+total = SingleForLoop.sum_range(10)      # Returns: 45
+maximum = SingleForLoop.max_list([1, 5, 3])  # Returns: 5
 
-# Reverse a list
+# Data structure operations
 reversed_list = DsList.reverse_list([1, 2, 3, 4, 5])  # Returns: [5, 4, 3, 2, 1]
+rotated = DsList.rotate_list([1, 2, 3, 4, 5], 2)      # Returns: [4, 5, 1, 2, 3]
 
-# Check palindrome
+# String operations
 is_palindrome = StrOps.palindrome("racecar")  # Returns: True
+reversed_str = StrOps.str_reverse("hello")    # Returns: "olleh"
 
-# Hash a password
+# Authentication
 hashed, salt = SimpleAuth.hash_password("SecurePass123")
 is_valid = SimpleAuth.verify_password("SecurePass123", hashed, salt)  # Returns: True
+token = SimpleAuth.generate_token(16)         # Returns: random 16-char token
+
+# SQL queries (requires data/chinook.db)
+exists = SqlQuery.query_album("Presence")     # Returns: True/False
+albums = SqlQuery.join_albums()               # Returns: list of tuples
+invoices = SqlQuery.top_invoices()            # Returns: top 10 invoices
+```
+
+### Integration Example
+
+Use in your LLM evaluation pipeline:
+
+```python
+from llm_benchmark.algorithms.primes import Primes
+from llm_benchmark.generator.gen_list import GenList
+
+# Generate test data
+test_data = GenList.random_list(100, 1000)
+
+# Test generated code against benchmark
+def evaluate_llm_generated_function(func, test_cases):
+    """Evaluate LLM-generated code."""
+    passed = 0
+    for test_input, expected_output in test_cases:
+        try:
+            result = func(test_input)
+            if result == expected_output:
+                passed += 1
+        except Exception as e:
+            print(f"Error: {e}")
+    return passed / len(test_cases)
+
+# Use benchmark as ground truth
+test_cases = [(n, Primes.is_prime(n)) for n in range(100)]
+accuracy = evaluate_llm_generated_function(llm_generated_is_prime, test_cases)
+print(f"Accuracy: {accuracy:.2%}")
 ```
 
 ## Testing
 
-### Run Unit Tests
+The project includes comprehensive unit tests and performance benchmarks using pytest and pytest-benchmark.
 
-Execute all unit tests without benchmarking:
+### Quick Test Commands
 
 ```bash
+# Run all unit tests (fast, skips benchmarks)
 poetry run pytest --benchmark-skip tests/
-```
 
-### Run Benchmarks
-
-Execute performance benchmarks for all functions:
-
-```bash
+# Run only performance benchmarks (slow)
 poetry run pytest --benchmark-only tests/
+
+# Run everything (tests + benchmarks)
+poetry run pytest tests/
+
+# Run with verbose output
+poetry run pytest -v tests/
+
+# Run specific module tests
+poetry run pytest tests/llm_benchmark/algorithms/
+poetry run pytest tests/llm_benchmark/control/
+
+# Run specific test file
+poetry run pytest tests/llm_benchmark/algorithms/test_primes.py
+
+# Run with coverage report
+poetry run pytest --cov=llm_benchmark tests/
 ```
 
-This will measure and compare the execution time of different implementations and provide detailed performance metrics.
+### Understanding Test Output
+
+**Unit Test Output:**
+```
+tests/llm_benchmark/algorithms/test_primes.py::test_is_prime PASSED     [ 33%]
+tests/llm_benchmark/algorithms/test_primes.py::test_sum_primes PASSED   [ 66%]
+tests/llm_benchmark/algorithms/test_primes.py::test_prime_factors PASSED [100%]
+```
+
+**Benchmark Output:**
+```
+----------------------- benchmark: 3 tests -----------------------
+Name (time in us)             Min      Max     Mean    Median
+-----------------------------------------------------------------
+test_benchmark_is_prime      5.1      8.2     5.5      5.4
+test_benchmark_sum_primes   125.3   150.6   132.8    131.9
+-----------------------------------------------------------------
+```
+
+### Test Structure
+
+Tests mirror the source structure:
+```
+tests/
+└── llm_benchmark/
+    ├── algorithms/test_primes.py
+    ├── control/test_single.py
+    ├── control/test_double.py
+    ├── datastructures/test_dslist.py
+    ├── sql/test_query.py
+    └── strings/ (tests to be added)
+```
+
+For detailed testing documentation, see [tests/README.md](tests/README.md).
 
 ## Module Documentation
 
@@ -180,22 +413,153 @@ llm-benchmarking-py/
 └── pyproject.toml         # Project configuration
 ```
 
+## Build Instructions
+
+### Building for Distribution
+
+While this is primarily a library/benchmark suite, you can build it for distribution:
+
+```bash
+# Build wheel and source distribution
+poetry build
+
+# Output will be in dist/
+# - llm_benchmark-0.1.0-py3-none-any.whl
+# - llm_benchmark-0.1.0.tar.gz
+```
+
+### Installing from Source
+
+```bash
+# Install in development mode
+poetry install
+
+# Install without dev dependencies
+poetry install --no-dev
+
+# Install from built wheel
+pip install dist/llm_benchmark-0.1.0-py3-none-any.whl
+```
+
+### Running without Installation
+
+You can run the benchmarks directly:
+
+```bash
+# Add src to PYTHONPATH
+export PYTHONPATH="${PYTHONPATH}:${PWD}/src"
+python main.py
+
+# Or use Python's -m flag
+python -m main
+```
+
 ## Development
 
-### Code Formatting
+### Development Workflow
+
+1. **Activate Poetry shell:**
+   ```bash
+   poetry shell
+   ```
+
+2. **Make your changes** to source files
+
+3. **Format code:**
+   ```bash
+   poetry run black src/ tests/
+   poetry run isort src/ tests/
+   ```
+
+4. **Run tests:**
+   ```bash
+   poetry run pytest --benchmark-skip tests/
+   ```
+
+5. **Run benchmarks** (optional):
+   ```bash
+   poetry run pytest --benchmark-only tests/
+   ```
+
+### Code Style
+
+- **Formatter**: Black (line length: 88)
+- **Import sorting**: isort
+- **Type hints**: Required for all function signatures
+- **Docstrings**: Google-style docstrings for all public functions
+
 ```bash
-poetry run black src/ tests/
-poetry run isort src/ tests/
+# Check formatting without changes
+poetry run black --check src/ tests/
+
+# Format all code
+poetry run black src/ tests/ && poetry run isort src/ tests/
 ```
+
+### Adding New Benchmarks
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed instructions on:
+- Adding new modules
+- Writing benchmark functions
+- Creating tests
+- Documentation requirements
+
+## Contributing
+
+Contributions are welcome! We appreciate your help in making this project better.
+
+### How to Contribute
+
+1. **Fork the repository**
+2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
+3. **Make your changes** following our code style guidelines
+4. **Add/update tests** for your changes
+5. **Ensure all tests pass** (`poetry run pytest tests/`)
+6. **Format your code** (`poetry run black . && poetry run isort .`)
+7. **Commit your changes** (`git commit -m 'Add amazing feature'`)
+8. **Push to your branch** (`git push origin feature/amazing-feature`)
+9. **Open a Pull Request**
+
+For detailed contribution guidelines, please see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+### Development Resources
+
+- **README.md** (this file) - Project overview and usage
+- **CONTRIBUTING.md** - Contribution guidelines and development setup
+- **OPTIMIZATION.md** - Performance optimization documentation
+- **CHANGES.md** - Changelog and version history
+- **tests/README.md** - Testing documentation
+
+## Documentation
+
+- [Module Documentation](#module-documentation) - API reference for all modules
+- [Testing Guide](tests/README.md) - Comprehensive testing documentation
+- [Contributing Guide](CONTRIBUTING.md) - Development and contribution guidelines
+- [Optimization Guide](OPTIMIZATION.md) - Performance optimization details
+- [Changelog](CHANGES.md) - Version history and changes
+
+## Related Files
+
+- **OPTIMIZATION.md** - Details about performance improvements (O(n²) → O(n log log n))
+- **CHANGES.md** - Summary of optimizations and changes
+- **benchmark_primes.py** - Micro-benchmark demonstrating optimizations
+
+## Performance Notes
+
+This project includes several performance optimizations:
+
+- **Prime algorithms**: Optimized from O(n²) to O(n log log n) using Sieve of Eratosthenes
+- **Primality testing**: Optimized from O(n) to O(√n)
+- See [OPTIMIZATION.md](OPTIMIZATION.md) for detailed performance analysis
 
 ## License
 
 See project repository for license information.
 
-## Contributing
-
-Contributions are welcome! Please ensure all tests pass before submitting pull requests.
-
 ## Author
 
-Matthew Truscott (matthew.truscott@turintech.ai)
+**Matthew Truscott** (matthew.truscott@turintech.ai)
+
+---
+
+**Ready to get started?** Run `poetry install` and `poetry run main` to see all benchmarks in action!

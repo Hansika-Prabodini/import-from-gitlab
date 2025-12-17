@@ -114,6 +114,62 @@ poetry run pytest --benchmark-only tests/
 
 This will measure and compare the execution time of different implementations and provide detailed performance metrics.
 
+### Run with Coverage
+
+Execute tests with code coverage reporting:
+
+```bash
+poetry run pytest --cov=src --cov-report=term-missing --benchmark-skip tests/
+```
+
+Generate HTML coverage report:
+
+```bash
+poetry run pytest --cov=src --cov-report=html --benchmark-skip tests/
+```
+
+View the report by opening `htmlcov/index.html` in your browser.
+
+## Metrics & KPIs
+
+This project tracks comprehensive metrics to evaluate LLM code generation capabilities:
+
+### Performance Metrics
+- **Execution Time**: Measures function performance in microseconds/milliseconds
+- **Operations Per Second (OPS)**: Throughput metric for each function
+- **Statistical Analysis**: Min, Max, Mean, Median, Standard Deviation
+- **Complexity Analysis**: Big O notation for time and space complexity
+- **Optimization Tracking**: Before/after comparisons for performance improvements
+
+### Quality Metrics
+- **Test Pass Rate**: Percentage of tests passing
+- **Code Coverage**: Line and branch coverage of source code
+- **Correctness**: Validation against expected outputs
+- **Edge Case Handling**: Tests for boundary conditions
+
+### Security Metrics
+- **SQL Injection Testing**: Protection against common vulnerabilities
+- **Password Strength**: Validation of authentication requirements
+- **Input Validation**: Username and data format checking
+
+### Aggregate Metrics Dashboard
+
+Run the metrics summary script to see overall project health:
+
+```bash
+poetry run python metrics_summary.py
+```
+
+This generates a comprehensive report including:
+- Module test coverage
+- Overall test pass rates
+- Code coverage percentages
+- Benchmark summaries
+- Project health score
+- Actionable recommendations
+
+For detailed KPI analysis, see [METRICS_ANALYSIS.md](METRICS_ANALYSIS.md)
+
 ## Module Documentation
 
 ### Algorithms

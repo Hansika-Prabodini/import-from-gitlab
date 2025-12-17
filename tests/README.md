@@ -176,7 +176,10 @@ The `benchmark` fixture automatically:
   - Top invoice queries
 
 ### Strings (`strings/`)
-- Currently no test file (to be added)
+- **test_strops.py**: Tests for string operations
+  - String reversal
+  - Palindrome detection
+  - Edge cases with unicode and special characters
 
 ## Benchmark Output
 

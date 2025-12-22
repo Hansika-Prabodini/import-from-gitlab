@@ -45,10 +45,10 @@ def test_benchmark_count_pairs(benchmark) -> None:
     "arr0, arr1, count",
     [
         ([0], [0], 1),
-        ([1, 2, 3], [2, 3, 1], 0),
-        ([1, 1, 1], [1, 2, 3], 1),
-        ([1, 1, 2], [1, 2, 2], 2),
-        ([1, 1, 2, 2], [1, 1, 2, 2], 4),
+        ([1, 2, 3], [2, 3, 1], 3),
+        ([1, 1, 1], [1, 2, 3], 3),
+        ([1, 1, 2], [1, 2, 2], 4),
+        ([1, 1, 2, 2], [1, 1, 2, 2], 8),
     ],
 )
 def test_count_duplicates(arr0: List[int], arr1: List[int], count: int) -> None:
@@ -57,6 +57,23 @@ def test_count_duplicates(arr0: List[int], arr1: List[int], count: int) -> None:
 
 def test_benchmark_count_duplicates(benchmark) -> None:
     benchmark(DoubleForLoop.count_duplicates, [1, 1, 2, 2], [1, 1, 2, 2])
+
+
+def test_count_duplicates_all_pairs() -> None:
+    """Test that count_duplicates correctly counts all matching pairs between arrays.
+    
+    This test demonstrates the bug where the function incorrectly uses 'i == j'
+    condition, which limits comparison to same-index positions only.
+    
+    For arrays [1, 1] and [1, 1], there should be 4 matching pairs:
+    - arr0[0]=1 matches arr1[0]=1
+    - arr0[0]=1 matches arr1[1]=1
+    - arr0[1]=1 matches arr1[0]=1
+    - arr0[1]=1 matches arr1[1]=1
+    
+    The buggy implementation only counts 2 (positions 0 and 1 where i==j).
+    """
+    assert DoubleForLoop.count_duplicates([1, 1], [1, 1]) == 4
 
 
 @pytest.mark.parametrize(

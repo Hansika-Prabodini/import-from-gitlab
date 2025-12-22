@@ -6,10 +6,17 @@ This document describes the performance optimizations made to address the worst-
 
 ## Bottleneck Identification
 
-Based on benchmark analysis, the **`sum_primes`** function was identified as the worst-performing function with the following characteristics:
+Based on benchmark analysis, multiple bottlenecks were identified in the prime number algorithms:
 
+### Primary Bottleneck (Addressed First)
+- **Function**: `sum_primes`
 - **Benchmark time**: 132.8 µs (mean) - the slowest among all tested functions
 - **Original complexity**: O(n²)
+- **Location**: `src/llm_benchmark/algorithms/primes.py`
+
+### Secondary Bottleneck (Addressed Subsequently)
+- **Function**: `prime_factors`
+- **Original complexity**: O(n²) worst case
 - **Location**: `src/llm_benchmark/algorithms/primes.py`
 
 ## Root Cause Analysis
@@ -99,14 +106,65 @@ def sum_primes(n: int) -> int:
 
 **Trade-off:** Uses O(n) memory but achieves dramatic speed improvement
 
+### 3. Optimized `prime_factors` Function: O(n²) → O(√n)
+
+**Changes:**
+- Handle factor 2 separately and extract all powers of 2 first
+- Check only odd divisors from 3 to √n
+- If n > 1 after checking up to √n, n itself is a prime factor
+- Eliminate redundant checks from previous implementation
+
+**Code changes:**
+```python
+# Before: O(n²)
+def prime_factors(n: int) -> List[int]:
+    ret = []
+    while n > 1:
+        for i in range(2, n + 1):  # Checks all numbers up to n
+            if n % i == 0:
+                ret.append(i)
+                n = n // i
+                break
+    return ret
+
+# After: O(√n)
+def prime_factors(n: int) -> List[int]:
+    ret = []
+    
+    if n <= 1:
+        return ret
+    
+    # Check for factor 2
+    while n % 2 == 0:
+        ret.append(2)
+        n = n // 2
+    
+    # Check for odd factors from 3 to √n
+    i = 3
+    while i * i <= n:
+        while n % i == 0:
+            ret.append(i)
+            n = n // i
+        i += 2
+    
+    # If n is still greater than 1, then it's a prime factor
+    if n > 1:
+        ret.append(n)
+    
+    return ret
+```
+
+**Expected improvement:** ~√n times faster for large composite numbers, dramatic improvement for numbers with large prime factors
+
 ## Performance Comparison
 
 ### Complexity Analysis
 
-| Function    | Original Complexity | Optimized Complexity | Space Complexity |
-|-------------|--------------------|--------------------|------------------|
-| `is_prime`  | O(n)               | O(√n)              | O(1)             |
-| `sum_primes`| O(n²)              | O(n log log n)     | O(n)             |
+| Function        | Original Complexity | Optimized Complexity | Space Complexity |
+|-----------------|--------------------|--------------------|------------------|
+| `is_prime`      | O(n)               | O(√n)              | O(1)             |
+| `sum_primes`    | O(n²)              | O(n log log n)     | O(n)             |
+| `prime_factors` | O(n²)              | O(√n)              | O(log n)         |
 
 ### Benchmark Results
 
@@ -119,13 +177,14 @@ python benchmark_primes.py
 **Expected improvements:**
 - `is_prime`: ~√n times faster (e.g., 100x faster for n=10,000)
 - `sum_primes`: 10-100x faster depending on input size
+- `prime_factors`: 10-1000x faster for large numbers, especially those with large prime factors
 
 ## Testing & Validation
 
 All existing tests pass without modification:
 - ✅ `test_is_prime` - Correctness verified for edge cases
 - ✅ `test_sum_primes` - Results match expected values
-- ✅ `test_prime_factors` - Not modified, still works correctly
+- ✅ `test_prime_factors` - Optimized version produces identical results
 
 Run tests:
 ```bash
@@ -160,23 +219,21 @@ poetry run python benchmark_primes.py
 ✨ **Key Achievements:**
 1. Reduced `sum_primes` from O(n²) to O(n log log n)
 2. Reduced `is_prime` from O(n) to O(√n)
-3. Maintained backward compatibility (same API)
-4. All tests pass without modification
-5. Created comprehensive benchmark script
+3. Reduced `prime_factors` from O(n²) to O(√n)
+4. Maintained backward compatibility (same API)
+5. All tests pass without modification
+6. Created comprehensive benchmark script with all three optimizations
 
 ⚠️ **Trade-offs:**
 - `sum_primes` now uses O(n) memory (previously O(1))
 - This is acceptable as the speed improvement is dramatic
+- `prime_factors` uses O(log n) space for result (number of prime factors)
 
 ## Future Optimization Opportunities
 
 Other potential bottlenecks that could be optimized:
 
-1. **`prime_factors`**: Currently O(n²) worst case
-   - Could be optimized using trial division up to √n
-   - Could use pre-computed sieve for factorization
-
-2. **`Sort.sort_list`**: Uses bubble sort O(n²)
+1. **`Sort.sort_list`**: Uses bubble sort O(n²)
    - Could use quicksort or merge sort for O(n log n)
 
 3. **`DoubleForLoop` functions**: Various O(n²) operations

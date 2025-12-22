@@ -83,7 +83,7 @@ class Primes:
 
     @staticmethod
     def prime_factors(n: int) -> List[int]:
-        """Prime factors of a number
+        """Prime factors of a number (optimized to O(√n))
 
         Args:
             n (int): Number to factorize
@@ -92,10 +92,26 @@ class Primes:
             List[int]: List of prime factors
         """
         ret = []
-        while n > 1:
-            for i in range(2, n + 1):
-                if n % i == 0:
-                    ret.append(i)
-                    n = n // i
-                    break
+        
+        # Handle edge cases
+        if n <= 1:
+            return ret
+        
+        # Check for factor 2
+        while n % 2 == 0:
+            ret.append(2)
+            n = n // 2
+        
+        # Check for odd factors from 3 to √n
+        i = 3
+        while i * i <= n:
+            while n % i == 0:
+                ret.append(i)
+                n = n // i
+            i += 2
+        
+        # If n is still greater than 1, then it's a prime factor
+        if n > 1:
+            ret.append(n)
+        
         return ret

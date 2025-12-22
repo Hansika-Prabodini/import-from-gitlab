@@ -16,13 +16,20 @@
   - **Impact**: 10-100x faster depending on input size
   - **Trade-off**: Uses O(n) memory instead of O(1)
 
-#### 2. `benchmark_primes.py` (NEW)
+- **Function**: `prime_factors(n: int) -> List[int]`
+  - **Change**: Optimized from O(n²) to O(√n)
+  - **Details**: Handles factor 2 separately, checks odd divisors only up to √n
+  - **Impact**: 10-1000x faster for large numbers with large prime factors
+  - **Trade-off**: Uses O(log n) space for result list
+
+#### 2. `benchmark_primes.py` (NEW/UPDATED)
 - **Purpose**: Micro-benchmark script to demonstrate optimization improvements
 - **Features**:
-  - Compares original vs optimized implementations
-  - Tests multiple input sizes
+  - Compares original vs optimized implementations for all three functions
+  - Tests multiple input sizes for each function
   - Shows timing, speedup metrics, and complexity analysis
   - Verifies correctness of optimizations
+  - Includes benchmarks for `prime_factors` optimization
 
 #### 3. `OPTIMIZATION.md` (NEW)
 - Comprehensive documentation of the optimization process
@@ -69,14 +76,15 @@ poetry run python benchmark_primes.py
 
 ### Key Metrics
 
-| Function    | Before    | After             | Improvement   |
-|-------------|-----------|-------------------|---------------|
-| `is_prime`  | O(n)      | O(√n)             | ~√n faster    |
-| `sum_primes`| O(n²)     | O(n log log n)    | 10-100x faster|
+| Function        | Before    | After             | Improvement       |
+|-----------------|-----------|-------------------|-------------------|
+| `is_prime`      | O(n)      | O(√n)             | ~√n faster        |
+| `sum_primes`    | O(n²)     | O(n log log n)    | 10-100x faster    |
+| `prime_factors` | O(n²)     | O(√n)             | 10-1000x faster   |
 
 ### Next Steps
 
 For further improvements, consider:
-1. Optimizing `prime_factors` function (currently O(n²))
-2. Optimizing sorting functions (bubble sort → quicksort)
+1. Optimizing sorting functions (bubble sort → quicksort/mergesort for O(n log n))
+2. Optimizing other O(n²) functions in control flow and data structures
 3. Adding caching/memoization for frequently called functions

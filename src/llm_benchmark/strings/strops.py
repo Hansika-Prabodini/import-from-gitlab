@@ -8,7 +8,16 @@ class StrOps:
 
         Returns:
             str: Reversed string
+
+        Raises:
+            TypeError: If s is not a string
+
+        Note:
+            Empty strings are valid inputs and will return an empty string.
         """
+        if not isinstance(s, str):
+            raise TypeError("Input must be a string")
+        
         ret = ""
         for i in range(len(s)):
             ret += s[len(s) - 1 - i]
@@ -23,7 +32,16 @@ class StrOps:
 
         Returns:
             bool: True if the string is a palindrome, False otherwise
+
+        Raises:
+            TypeError: If s is not a string
+
+        Note:
+            Empty strings are considered palindromes and will return True.
         """
+        if not isinstance(s, str):
+            raise TypeError("Input must be a string")
+        
         for i in range(len(s)):
             if s[i] != s[len(s) - 1 - i]:
                 return False
